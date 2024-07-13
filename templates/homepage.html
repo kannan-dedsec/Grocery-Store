@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% block navbar %}
+      {% if type == 1 : %}
+            <ul class="navbar-nav mr-auto">
+                  <li class="nav-item">
+                    <a class="nav-link" href="/user/{{ username }}/products">Products</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/user/{{ username }}/categories">Categories</a>
+                  </li>
+                 <li class="nav-item">
+                    <a class="nav-link" href="/user/{{ username }}/units">Units</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                  </li>
+            </ul>
+
+      {% elif type == 2 : %}
+             <ul class="navbar-nav mr-auto">
+                  <li class="nav-item {% if route == 'home' %} active {% endif %}">
+                    <a class="nav-link" href="/user/{{ username }}">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/user/{{username}}/cart">Cart</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                  </li>
+            </ul>
+      {% endif %}
+{% endblock %}
+{% block body %}
+            {% if type == 1 : %}
+            <div class = "Dashboard">
+                <div class="Dashboard-LHS">
+                    <div class="card bg-transparent" style="width: 19rem;margin-top:30px;margin-left:30px;">
+                      <h5 class="card-title">Categories Vs Count</h5>
+                      <div class="card-body">
+                             <div>
+                              <canvas id="categoriesVsCountChart"></canvas>
+                            </div>
+                      </div>
+                    </div>
+                    <div class="card bg-transparent" style="width: 19rem;margin-top:30px;margin-left:30px;">
+                      <h5 class="card-title">Products Vs Count</h5>
+                      <div class="card-body">
+                             <div>
+                              <canvas id="productsVsCountChart"></canvas>
+                            </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="Dashboard-RHS">
+                     <div class="card bg-transparent" style="width: 30rem;margin-top:90px;margin-left:30px;">
+                      <h5 class="card-title">Products Wise Selling</h5>
+                      <div class="card-body">
+                             <div>
+                              <canvas id="productsVsSelling"></canvas>
+                            </div>
+                      </div>
+                    </div>
+                    <div class="card bg-transparent" style="width: 30rem;margin-top:20px;margin-left:30px;">
+                      <h5 class="card-title">Category Wise Selling</h5>
+                      <div class="card-body">
+                             <div>
+                              <canvas id="categoriesVsSelling"></canvas>
+                            </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="basicStats" >
+                    <div>
+                        <div class="card bg-transparent" style="width: 30rem;margin-top:10px;margin-left:30px;">
+                          <h5 class="card-title">Total Revenue</h5>
+                            <div class="card-body">
+                                 <div>
+                                     <h1>₹ {{ totalRevenue }}</h1>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card bg-transparent" style="width: 30rem;margin-top:10px;margin-left:30px;">
+                          <h5 class="card-title">Total Selling</h5>
+                            <div class="card-body">
+                                 <div>
+                                     <h1>{{ totalSelling }}</h1>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card bg-transparent" style="width: 30rem;margin-top:10px;margin-left:30px;">
+                          <h5 class="card-title">Total Customers</h5>
+                            <div class="card-body">
+                                 <div>
+                                     <h1>{{ totalCustomers }}</h1>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                     <div>
+                        <div class="card bg-transparent" style="width: 30rem;margin-top:10px;margin-left:30px;">
+                          <h5 class="card-title">No of Products</h5>
+                            <div class="card-body">
+                                 <div>
+                                     <h1>{{ totalProducts }}</h1>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                    <div class="basicStatDiv">
+                        <div class="card bg-transparent" style="width: 30rem;margin-top:10px;margin-left:30px;">
+                          <h5 class="card-title">No of Categories</h5>
+                            <div class="card-body">
+                                 <div>
+                                     <h1>{{ totalCategories }}</h1>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                {% block javascript %}
+                       <script>
+                          const categoriesVsCount = document.getElementById('categoriesVsCountChart');
+                          const ProductsVsCount = document.getElementById('productsVsCountChart');
+                          const ProductsVsSelling = document.getElementById('productsVsSelling');
+                          const CategoriesVsSelling = document.getElementById('categoriesVsSelling');
+                          new Chart(categoriesVsCount, {type: 'pie',data: {
+                              labels: [ {% for key in categoriesVsCount.keys() %}'{{ key }}'{% if not loop.last %},{% endif %}{% endfor %}],
+                              datasets: [{label: 'No of products',data: [{% for value in categoriesVsCount.values() %}'{{ value }}'{% if not loop.last %}, {% endif %}{% endfor %}],borderWidth: 1}]},
+                              options: { scales: { y: { beginAtZero: true}}}
+                          });
+                          new Chart(ProductsVsCount, {type: 'pie',data: {
+                              labels: [{% for key in productsVsCount.keys() %}'{{ key }}'{% if not loop.last %},{% endif %}{% endfor %}],
+                              datasets: [{label: 'Quantity',data: [{% for value in productsVsCount.values() %}'{{ value }}'{% if not loop.last %}, {% endif %}{% endfor %}],borderWidth: 1}]},
+                              options: { scales: { y: { beginAtZero: true}}}
+                          });
+                           new Chart(ProductsVsSelling, {type: 'bar',data: {
+                              labels: [{% for key in productVsSelling.keys() %}'{{ key }}'{% if not loop.last %},{% endif %}{% endfor %}],
+                              datasets: [{label: 'no of sales',data: [{% for value in productVsSelling.values() %}'{{ value }}'{% if not loop.last %}, {% endif %}{% endfor %}],borderWidth: 1}]},
+                              options: { scales: { y: { beginAtZero: true}}}
+                          });
+                            new Chart(CategoriesVsSelling, {type: 'bar',data: {
+                              labels: [{% for key in categoriesVsSelling.keys() %}'{{ key }}'{% if not loop.last %},{% endif %}{% endfor %}],
+                              datasets: [{label: 'no of sales',data: [{% for value in categoriesVsSelling.values() %}'{{ value }}'{% if not loop.last %}, {% endif %}{% endfor %}],borderWidth: 1}]},
+                              options: { scales: { y: { beginAtZero: true}}}
+                          });
+                        </script>
+                {% endblock %}
+                <button style="position:fixed;bottom:2%;right:2%" title="Add item/category/unit" type="button" class="btn btn-info btn-sm btn-outline-primary" data-toggle="modal" data-target="#addItem" >
+                   <i class=" bi bi-plus-circle-fill">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
+                       </svg>
+                   </i>
+               </button>
+                <div class="modal fade" id="addItem" tabindex="-1" role="dialog" aria-labelledby="add" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                         <div class="modal-content bg-dark text-white">
+                            <div class="modal-header">
+                                 <h5 class="modal-title " id="add">Add Product/Category</h5>
+                            </div>
+                            <div class="modal-body ">
+                                        <ul class="nav nav-tabs font-weight-bold" id="mainTab" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link active " id="item-tab" data-toggle="tab" href="#item" role="tab" aria-controls="item" aria-selected="true">Product</a>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link" id="category-tab" data-toggle="tab" href="#category" role="tab" aria-controls="category" aria-selected="false">Category</a>
+                                            </li>
+                                             <li class="nav-item" role="presentation">
+                                                <a class="nav-link" id="unit-tab" data-toggle="tab" href="#unit" role="tab" aria-controls="unit" aria-selected="false">Unit</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content font-weight-normal" id="Contents">
+                                            <div class="tab-pane fade show active" id="item" role="tabpanel" aria-labelledby="item-tab">
+                                                <br>
+                                                <div class="form-group">
+
+                                                    <label for="itemName">Enter Name :</label>
+                                                    <input type="text" class="form-control" id="itemName">
+                                                </div>
+                                               <div class="form-group">
+                                                    <label for="units">Unit :</label>
+                                                    <select class="form-control" id="units">
+                                                        {% for key, value in units.items() %}
+                                                            <option value="{{key}}">{{value}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="categories">category :</label>
+                                                    <select class="form-control" id="categories">
+                                                        {% for key, value in categories.items() %}
+                                                            <option value="{{key}}">{{value}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="rate">price per Unit :</label>
+                                                    <input type="number" class="form-control" id="rate">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="quantity">quantity :</label>
+                                                    <input type="number" class="form-control" id="quantity">
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="category" role="tabpanel" aria-labelledby="category-tab">
+                                                <div class="form-group">
+                                                    <br>
+                                                    <label for="categoryName">Category Name :</label>
+                                                    <input type="text" class="form-control" id="categoryName" placeholder="Enter name">
+                                                </div>
+                                            </div>
+                                             <div class="tab-pane fade" id="unit" role="tabpanel" aria-labelledby="unit-tab">
+                                                <div class="form-group">
+                                                    <br>
+                                                    <label for="unitName">Unit Name :</label>
+                                                    <input type="text" class="form-control" id="unitName" placeholder="Enter name">
+                                                </div>
+                                            </div>
+                                        </div>
+                             </div>
+                             <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="button" onclick="saveData()" id="addChanges" class="btn btn-primary">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif type == 2 : %}
+
+            {% endif %}
+{% endblock %}

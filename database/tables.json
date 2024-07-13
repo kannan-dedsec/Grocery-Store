@@ -1,0 +1,107 @@
+{
+  "tables": {
+    "users": {
+      "columns": {
+        "user_id": {"type": "TEXT", "constraints": "NOT NULL UNIQUE"},
+        "username": {"type": "varchar", "constraints": "NOT NULL UNIQUE"},
+        "address": {"type": "TEXT", "constraints": "NOT NULL"},
+        "mobile_number": {"type": "INT", "constraints": "NOT NULL UNIQUE"},
+        "user_role": {"type": "INT", "constraints": "NOT NULL"}
+      },
+      "primary_key": ["user_id"]
+    },
+    "cartvsusers": {
+      "columns": {
+        "cart_id": {"type": "TEXT", "constraints": "NOT NULL UNIQUE"},
+        "user_id": {"type": "TEXT", "constraints": "NOT NULL UNIQUE"}
+      },
+      "primary_key": ["cart_id"],
+      "foreign_keys": [
+        {"name": "cartvsusers_fk0", "columns": ["user_id"], "references": {"table": "users", "columns": ["user_id"]}, "on_delete": "CASCADE"}
+      ]
+    },
+    "uservspassword": {
+      "columns": {
+        "user_id": {"type": "TEXT", "constraints": "NOT NULL UNIQUE"},
+        "password": {"type": "varchar", "constraints": "NOT NULL"}
+      },
+      "primary_key": ["user_id"],
+      "foreign_keys": [
+        {"name": "uservspassword_fk0", "columns": ["user_id"], "references": {"table": "users", "columns": ["user_id"]}, "on_delete": "CASCADE"}
+      ]
+    },
+    "carts": {
+      "columns": {
+        "cart_id": {"type": "TEXT", "constraints": "NOT NULL"},
+        "item_id": {"type": "TEXT", "constraints": "NOT NULL"},
+        "count": {"type": "INT", "constraints": "NOT NULL"},
+        "price": {"type": "INT", "constraints": "NOT NULL"},
+        "total_price": {"type": "INT", "constraints": "NOT NULL"}
+      },
+      "foreign_keys": [
+        {"name": "carts_fk0", "columns": ["item_id"], "references": {"table": "items", "columns": ["item_id"]}, "on_delete": "CASCADE"},
+        {"name": "carts_fk1", "columns": ["cart_id"], "references": {"table": "cartvsusers", "columns": ["cart_id"]}, "on_delete": "CASCADE"}
+      ]
+    },
+    "items": {
+      "columns": {
+        "item_id": {"type": "TEXT", "constraints": "NOT NULL UNIQUE"},
+        "item_name": {"type": "TEXT", "constraints": "NOT NULL"},
+        "category_id": {"type": "TEXT", "constraints": ""},
+        "price": {"type": "INT", "constraints": "NOT NULL"},
+        "quantity": {"type": "INT", "constraints": "NOT NULL"},
+        "unit": {"type": "TEXT", "constraints": ""},
+        "store_id": {"type": "TEXT", "constraints": "NOT NULL"}
+      },
+      "primary_key": ["item_id"],
+      "foreign_keys": [
+        {"name": "items_fk0", "columns": ["category_id"], "references": {"table": "categories", "columns": ["category_id"]}, "on_delete": "SET NULL"},
+        {"name": "items_fk1", "columns": ["unit"], "references": {"table": "units", "columns": ["unit_id"]}, "on_delete": "SET NULL"},
+        {"name": "items_fk2", "columns": ["store_id"], "references": {"table": "stores", "columns": ["store_id"]}, "on_delete": "CASCADE"}
+      ]
+    },
+    "categories": {
+      "columns": {
+        "category_id": {"type": "TEXT", "constraints": "NOT NULL UNIQUE"},
+        "category_name": {"type": "TEXT", "constraints": "NOT NULL UNIQUE"},
+        "store_id": {"type": "TEXT", "constraints": ""}
+      },
+      "primary_key": ["category_id"]
+    },
+    "units": {
+      "columns": {
+        "unit_id": {"type": "TEXT", "constraints": "NOT NULL UNIQUE"},
+        "unit_name": {"type": "TEXT", "constraints": "NOT NULL UNIQUE"},
+        "store_id": {"type": "TEXT", "constraints": ""}
+      },
+      "primary_key": ["unit_id"]
+    },
+    "stores": {
+      "columns": {
+        "store_id": {"type": "TEXT", "constraints": "NOT NULL UNIQUE"},
+        "store_name": {"type": "TEXT", "constraints": "NOT NULL UNIQUE"},
+        "manager_id": {"type": "TEXT", "constraints": "NOT NULL"}
+      },
+      "primary_key": ["store_id"],
+      "foreign_keys": [
+        {"name": "stores_fk0", "columns": ["manager_id"], "references": {"table": "users", "columns": ["user_id"]}, "on_delete": "CASCADE"}
+      ]
+    },
+    "solddata": {
+      "columns": {
+        "store_id": {"type": "TEXT", "constraints": "NOT NULL"},
+        "cart_id": {"type": "TEXT", "constraints": "NOT NULL"},
+        "user_id": {"type": "TEXT", "constraints": "NOT NULL"},
+        "item_id": {"type": "TEXT", "constraints": "NOT NULL"},
+        "quantity": {"type": "INT", "constraints": "NOT NULL"},
+        "time_in_millis": {"type": "INT", "constraints": "NOT NULL"},
+        "total_price": {"type": "INT", "constraints": "NOT NULL"}
+      },
+      "foreign_keys": [
+        {"name": "solddata_fk0", "columns": ["store_id"], "references": {"table": "stores", "columns": ["store_id"]}, "on_delete": "CASCADE"},
+        {"name": "solddata_fk1", "columns": ["user_id"], "references": {"table": "users", "columns": ["user_id"]}, "on_delete": "CASCADE"},
+        {"name": "solddata_fk2", "columns": ["item_id"], "references": {"table": "items", "columns": ["item_id"]}, "on_delete": "CASCADE"}
+      ]
+    }
+  }
+}

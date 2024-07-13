@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block body %}
+     {% if error != "": %}
+     <div class="bg-danger border border-dark" style="width:40%;padding-left:10px"><p>{{error}}</p></div>
+     {% endif %}
+
+     {% if type == None: %}
+        <div style="margin-top:18%;margin-left:45%" >
+        <button style="padding-right:25px" onclick="location.href='/register-page?type=user'" class="btn btn-lg btn-outline-primary">Register as User</button>
+        <br>
+        <br>
+        <button onclick="location.href='/register-page?type=store'" class="btn btn-lg btn-outline-warning" >Register as Store</button>
+         </div>
+     {% elif type == "user": %}
+      <div style="margin-top:10%;margin-left:40%" >
+         <form action="/register" method="POST" >
+            <div class="form-group" >
+                <label for="name">Username :</label>
+                <input  style="width:30%" id="name" name="username" class="form-control"required minlength="5" >
+            </div>
+           <div class="form-group">
+                <label for="pass">Password : </label>
+                <input style="width:30%" id="pass" name="password" type="password" class="form-control" minlength="5" required>
+           </div>
+           <div class="form-group">
+                <label for="add">Address : </label>
+                <input style="width:30%" id="add" name="address" type="text" class="form-control" required>
+           </div>
+           <div class="form-group">
+                <label for="mob">Mobile : </label>
+                <input style="width:30%" id="mob" name="mobile" type="text" class="form-control" minlength="3" required>
+           </div>
+             <input  name="type" type="hidden" value="user" >
+           <br>
+           <button class="btn btn-warning" type="submit">Submit</button>
+       </form>
+     </div>
+     {% else : %}
+     <div style="margin-top:10%;margin-left:40%" >
+         <form action="/register" method="POST" >
+             <div class="form-group" >
+                <label for="name">Store Name :</label>
+                <input  style="width:30%" id="name" name="store" class="form-control"required minlength="1" >
+            </div>
+            <div class="form-group" >
+                <label for="name">Username :</label>
+                <input  style="width:30%" id="name" name="username" class="form-control"required minlength="5" >
+            </div>
+           <div class="form-group">
+                <label for="pass">Password : </label>
+                <input style="width:30%" id="pass" name="password" type="password" class="form-control" minlength="5" required>
+           </div>
+           <div class="form-group">
+                <label for="add">Address : </label>
+                <input style="width:30%" id="add" name="address" type="text" class="form-control" minlength="1" required>
+           </div>
+           <div class="form-group">
+                <label for="mob">Mobile : </label>
+                <input style="width:30%" id="mob" name="mobile" type="text" class="form-control" minlength="3" required>
+           </div>
+             <input id="mob" name="type" type="hidden" value="store" >
+           <br>
+           <button class="btn btn-warning" type="submit">Submit</button>
+       </form>
+     </div>
+     {% endif %}
+
+{% endblock %}

@@ -1,0 +1,346 @@
+{% extends 'base.html' %}
+{% block navbar %}
+      {% if type == 1 : %}
+            <ul class="navbar-nav mr-auto">
+                  <li class="nav-item">
+                    <a class="nav-link {% if page == 'products' %} active {% endif %}" href="/user/{{ username }}/products">Products</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link {% if page == 'categories' %} active {% endif %}" href="/user/{{ username }}/categories">Categories</a>
+                  </li>
+                 <li class="nav-item">
+                    <a class="nav-link {% if page == 'units' %}active {% endif %}" href="/user/{{ username }}/units">Units</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                  </li>
+            </ul>
+             <form class="form-inline my-2 my-lg-0" action="/user/{{ username }}/{{page}}" method="GET" >
+                  <input class="form-control mr-sm-2" type="search" name="k" placeholder="Search" aria-label="Search">
+                  <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button>
+             </form>
+      {% elif type == 2 : %}
+             <ul class="navbar-nav mr-auto">
+                  <li class="nav-item  {% if page == 'Home' :%} active {% endif %} ">
+                    <a class="nav-link" href="/user/{{ username }}">Products</a>
+                  </li>
+                  <li class="nav-item {% if page == 'cart' :%} active {% endif %} ">
+                    <a class="nav-link" href="/user/{{username}}/cart">Cart</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                  </li>
+            </ul>
+            {% if page == "cart" and products : %}
+            <button style="margin-right:20px" onclick="checkOut()"  type="button" class="btn btn-outline-success">Check Out</button>
+            {% endif %}
+            <form class="form-inline my-2 my-lg-0" action="/user/{{ username }}" method="GET" >
+                  <input class="form-control mr-sm-2" type="search" name="k" placeholder="Search" aria-label="Search">
+                  <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button>
+             </form>
+      {% endif %}
+{% endblock %}
+{% block body %}
+            {% if type == 1 : %}
+                  {% if products %}
+                      <div class="container">
+                            <br>
+                          {% if page == "products" : %}
+                          <h2 style="display:inline">Product List</h2><button class="filterIco btn-outline-warning" id="filterIcon" data-toggle="modal" data-target="#filterModal"><i class="fa">&#xf0b0;</i></button>
+                                <br>
+                                <br>
+                                <div class="row">
+                                    {% for product in products %}
+                                    <div class="col-md-4">
+                                        <div class="product-box bg-dark text-white">
+                                            <button class="delete-icon btn-outline-warning" onclick="deleteProduct('item','{{ product.id }}')">
+                                                  <i class="fas fa-trash " ></i>
+                                            </button>
+                                            <h4 style="display:inline;font-family:Ubuntu" >{{ product.name }}</h4> <p style="display:inline" >( {{ product.category }} )</p>
+                                            <hr class="bg-warning" >
+                                            <p style="display:inline;" ><span style="font-weight: bold;">M.R.P :</span> ₹ {{ product.price }}</p><p style="display:inline;"> per {{product.unit}} </p><p style="display:inline;"> ({{ product.quantity }} left) </p>
+                                            <br><br>
+                                            <p><span style="font-weight: bold;">Shop: </span>{{ product.store }}</p>
+                                            <button class="edit-icon btn-outline-warning" data-toggle="modal" data-target="#editModal" onclick="fillEditModal('{{ product.id }}', '{{ product.name }}','{{ product.categoryId }}','{{product.unitId}}', {{ product.price }}, {{ product.quantity}})">
+                                                &#9998;
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                          {% elif page == "categories": %}
+                                <h2>Category List</h2>
+                                <br>
+                                <div class="row">
+                                    {% for product in products %}
+                                    <div class="col-md-4">
+                                        <div class="product-box bg-dark text-white">
+                                            <h4 style="display:inline;font-family:Ubuntu" >{{ product.name }}</h4>
+                                            <br>
+                                            <button style="top:14px;right:35px" class="edit-icon btn-outline-warning" data-toggle="modal" data-target="#editModal" onclick="fillCatEditModal('{{ product.id }}', '{{ product.name }}')">
+                                                &#9998;
+                                            </button>
+                                            <button class="delete-icon btn-outline-warning" onclick="deleteProduct('category','{{ product.id }}')">
+                                                  <i class="fas fa-trash " ></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                          {% elif page == "units": %}
+                               <h2>Units List</h2>
+                                    <br>
+                                    <div class="row">
+                                        {% for product in products %}
+                                        <div class="col-md-4">
+                                            <div class="product-box bg-dark text-white">
+                                                <h4 style="display:inline;font-family:Ubuntu" >{{ product.name }}</h4>
+                                                <br>
+                                                <button style="top:13px;" class="edit-icon btn-outline-warning" data-toggle="modal" data-target="#editModal" onclick="fillCatEditModal('{{ product.id }}', '{{ product.name }}')">
+                                                    &#9998;
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                          {% endif %}
+                        </div>
+                        <div class="modal fade " id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content bg-dark text-white">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editModalLabel">Edit &#9998;</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body ">
+
+                                         <div class="form-group">
+                                            <input type="text" class="form-control" id="editItemId" hidden>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editName">Name:</label>
+                                            <input type="text" class="form-control" id="editName">
+                                        </div>
+                                        {% if page == "products" : %}
+                                         <div class="form-group">
+                                            <label for="units">Unit :</label>
+                                            <select class="form-control" id="editUnit">
+                                                {% for key, value in units.items() %}
+                                                    <option value="{{key}}">{{value}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="categories">category :</label>
+                                            <select class="form-control" id="editCategory">
+                                                {% for key, value in categories.items() %}
+                                                    <option value="{{key}}">{{value}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editPrice">Price:</label>
+                                            <input type="number" class="form-control" id="editPrice">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editQuantity">Quantity:</label>
+                                            <input type="text" class="form-control" id="editQuantity">
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        {% if page == "products" : %}
+                                        <button type="button" class="btn btn-primary" onclick="updateProduct()">Update</button>
+                                        {% elif page == "categories": %}
+                                        <button type="button" class="btn btn-primary" onclick="updateCategory('category')">Update</button>
+                                         {% elif page == "units": %}
+                                         <button type="button" class="btn btn-primary" onclick="updateCategory('unit')">Update</button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                 {% else : %}
+                        <div class="error-container">
+                            <div class="error-message">No Data Available. 😞</div>
+                            <svg class="error-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 3h2v4h-2zm0 6h2v2h-2z"/>
+                            </svg>
+                        </div>
+                  {% endif %}
+            {% elif type == 2 : %}
+                {% if page == "Home" :%}
+                  {% if products %}
+                         <div class="container">
+                            <br>
+                              <h2 style="display:inline" >Product List</h2><button class="filterIco btn-outline-warning" id="filterIcon" data-toggle="modal" data-target="#filterModal"><i class="fa">&#xf0b0;</i></button>
+                             <br>
+                             <br>
+                            <div class="row">
+                                {% for product in products %}
+                                <div class="col-md-4">
+                                    <div class="product-box bg-dark text-white {% if product.quantity <= 0 %} disabled {% endif %}">
+                                        {% if product.quantity <= 0 %}
+                                            <p class="out-of-stock-label">Out of Stock</p>
+                                        {% endif %}
+                                        <h4 style="display:inline;font-family:Ubuntu" >{{ product.name }}</h4> <p style="display:inline" >( {{ product.category }} )</p>
+                                        <hr class="bg-warning" >
+                                        <p style="display:inline;" ><span style="font-weight: bold;">M.R.P :</span> ₹ {{ product.price }}</p><p style="display:inline;"> per {{product.unit}} </p><p style="display:inline;"> ({{ product.quantity }} left) </p>
+                                        <br><br>
+                                        <p><span style="font-weight: bold;display:inline">Shop: </span>{{ product.store }}</p>
+                                        <button class="btn btn-outline-warning" onclick="fillCartAdder('{{product.id}}','{{product.price}}','{{ product.quantity }}')" data-bs-toggle="modal" data-bs-target="#quantityAdd" >Add to Cart </button>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                         </div>
+                          <div class="modal fade" id="quantityAdd" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content bg-dark">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="ModalLabel">Add Item To Cart</h5>
+                                </div>
+                                <div class="modal-body">
+                                       <div class="form-group">
+                                            <input type="text" class="form-control bg-dark" id="cartItemId" hidden>
+                                        </div>
+                                         <div class="form-group">
+                                              <label for="pricePerItem">Price Per Item:</label>
+                                            <input style="color:white" type="text" class="form-control bg-dark" id="pricePerItem" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editQnty">Total Quantity:</label>
+                                             <input type="number" min="0" value="0" class="form-control" id="editQnty">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="TotalPrice">Total Price:</label>
+                                            <input style="color:white" type="text" class="form-control bg-dark" id="TotalPrice" value="0" disabled>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                                  <button type="button" onclick="addToCart()" class="btn btn-outline-primary">Add</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                 {% else : %}
+                    <div class="error-container">
+                        <div class="error-message">No Data Available. 😞</div>
+                        <svg class="error-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 3h2v4h-2zm0 6h2v2h-2z"/>
+                        </svg>
+                    </div>
+                  {% endif %}
+                {% elif page == "cart" : %}
+                    {% if products :%}
+                     <div class="container">
+                            <br>
+                            <h2 style ="display:inline">Cart List  </h2><h3 style ="display:inline" class="text-success"> ( Total Amount : {{totalAmount}} )</h3>
+                             <br>
+                            <br>
+                            <div class="row">
+                                {% for product in products %}
+                                <div class="col-md-4">
+                                    <div class="product-box bg-dark text-white">
+                                        <button class="delete-icon btn-outline-warning" onclick="deleteFromCart('{{ product.cart_id }}','{{ product.item_id }}')">
+                                              <i class="fas fa-trash " ></i>
+                                        </button>
+                                        <h4 style="display:inline;font-family:Ubuntu" >{{ product.name }}</h4> <p style="display:inline" >( {{ product.category }} )</p>
+                                        <hr class="bg-warning" >
+                                        <p style="display:inline;" ><span style="font-weight: bold;">M.R.P :</span> ₹ {{ product.price }}</p><p style="display:inline;"> ({{ product.quantity }} {{product.unit}}) </p>
+                                        <br><br>
+                                        <p style="display:inline;" ><span style="font-weight: bold;">Total Price:</span> ₹ {{ product.total_price }}</p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                         </div>
+                     {% else : %}
+                    <div class="error-container">
+                        <div class="error-message">No Data Available. 😞</div>
+                        <svg class="error-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 3h2v4h-2zm0 6h2v2h-2z"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+
+                {% endif %}
+            {% endif %}
+               <div class="modal fade " id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content bg-dark text-white">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="filterModalLabel">Filter Options</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <ul class="nav nav-tabs " id="filterTabs" role="tablist">
+                        <li class="nav-item">
+                          <a class="nav-link active " id="category-tab" data-toggle="tab" href="#category" role="tab" aria-controls="category" aria-selected="true">Category</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link " id="price-tab" data-toggle="tab" href="#price" role="tab" aria-controls="price" aria-selected="false">Price</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link " id="unit-tab" data-toggle="tab" href="#unit" role="tab" aria-controls="unit" aria-selected="false">Unit</a>
+                        </li>
+                      </ul>
+                      <div class="tab-content" id="filterTabContent">
+                          <br>
+                        <div class="tab-pane fade show active" id="category" role="tabpanel" aria-labelledby="category-tab">
+                           <label for="categories">category :</label>
+                            <select class="form-control" id="categorySelect">
+                                {% for key, value in categories.items() %}
+                                    <option value="{{key}}">{{value}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="tab-pane fade" id="price" role="tabpanel" aria-labelledby="price-tab">
+                           <label>Sort by Price:</label><br>
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceSort" id="lowToHigh" value="lowToHigh">
+                                <label class="form-check-label" for="lowToHigh">Low to High</label>
+                              </div>
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" name="priceSort" id="highToLow" value="highToLow">
+                                <label class="form-check-label" for="highToLow">High to Low</label>
+                              </div>
+                        </div>
+                        <div class="tab-pane fade" id="unit" role="tabpanel" aria-labelledby="unit-tab">
+                          <label for="units">Unit :</label>
+                            <select class="form-control" id="unitSelect">
+                                {% for key, value in units.items() %}
+                                    <option value="{{key}}">{{value}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                          <br>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-outline-primary" onclick="applyFilters('{{username}}','{{ type }}')">Apply Filter</button>
+                      <button type="button" class="btn btn-outline-warning" onclick="window.location.href ='/user/{{username}}{% if type == 1 %}/products{% endif %}'">Clear Filters</button>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                 <script>
+                    const inputField = document.getElementById("editQnty");
+                    const totalPrice = document.getElementById("TotalPrice");
+                     inputField.addEventListener("input", function() {
+                      const price = parseInt(document.getElementById("pricePerItem").value);
+                      const inputValue = parseInt(inputField.value);
+                      if (inputValue >= 0 && price >= 0)
+                      {
+                        totalPrice.value = inputValue * price;
+                      }
+                    });
+                    </script>
+{% endblock %}

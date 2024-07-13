@@ -1,0 +1,145 @@
+body{
+    background-color: #202124;
+    color : white
+}
+
+.product-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+    position: relative;
+    transition: transform 0.2s ease;
+    border-radius: 10px;
+
+}
+
+.product-box:hover {
+    transform: translateY(-5px);
+}
+
+
+.edit-icon,
+.delete-icon {
+    position: absolute;
+    font-size: 18px;
+    color: #007bff;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+     z-index: 1;
+}
+
+.form-control:valid {
+  background-color:#343A40 !important;
+  color:white;
+}
+
+.edit-icon {
+    top: 5px;
+    right: 5px;
+    border:none;
+    border-radius:50%;
+}
+
+.delete-icon {
+    bottom: 5px;
+    right: 5px;
+    color : #dc3545;
+    border:none;
+    border-radius:50%;
+}
+
+.product-box:hover .edit-icon,
+.product-box:hover .delete-icon {
+    opacity: 1;
+}
+
+.modal-dialog {
+    max-width: 400px;
+}
+
+.modal-content {
+    padding: 20px;
+}
+
+.sorting-btn.active {
+        color: #fff;
+        background-color: #007bff;
+}
+
+ .error-container
+ {
+   text-align: center;
+   margin-top:10%
+ }
+
+.error-message
+{
+    font-size: 24px;
+    color: #ffd700;
+    margin-bottom: 20px;
+}
+
+.error-svg
+{
+    width: 150px;
+    height: 150px;
+    fill: #ffd700;
+}
+
+.Dashboard-LHS
+{
+    positon : fixed;
+    display : inline;
+}
+
+
+.Dashboard-RHS
+{
+    position : fixed;
+    top :56px;
+    right:647px;
+    display : inline;
+}
+
+.filterIco
+{
+    border:none;
+    border-radius:50%;
+    font-size:12px;
+    display:inline;
+    margin-left:10px
+}
+
+.basicStats
+{
+     position : fixed;
+    top :56px;
+    right:99px;
+    display : inline;
+}
+
+.product-box {
+    position: relative;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    transition: opacity 0.3s, border-color 0.3s;
+}
+
+.product-box.disabled {
+    opacity: 0.6;
+    border-color: #ccc;
+    pointer-events: none;
+}
+
+.out-of-stock-label {
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
